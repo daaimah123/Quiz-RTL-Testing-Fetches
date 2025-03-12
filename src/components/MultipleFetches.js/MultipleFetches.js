@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect } from "react"
 import useAPI from "../../useAPI"
 
@@ -44,4 +42,3 @@ const MultipleFetches = () => {
 }
 
 export default MultipleFetches
-
