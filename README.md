@@ -9,7 +9,7 @@
 ```
 git clone <repo>
 # install dependencies
-npm i
+npm i; npm install ajv@latest
 # run and view application ui in browser
 npm run start
 # run and view test output 
