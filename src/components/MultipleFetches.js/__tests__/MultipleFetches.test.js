@@ -1,8 +1,9 @@
-import React from 'react';
-import MultipleFetches from '../MultipleFetches';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { act } from "react"
+import MultipleFetches from "../MultipleFetches.js"
+import { render, fireEvent, cleanup } from "@testing-library/react"
+import "@testing-library/jest-dom"
 
-afterEach(cleanup);
+afterEach(cleanup)
 
 test('starts without any post', () => {
   /*
