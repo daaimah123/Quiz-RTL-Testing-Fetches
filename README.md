@@ -9,7 +9,7 @@
 ```
 git clone <repo>
 # install dependencies
-npm i; npm install ajv@latest
+npm i
 # run and view application ui in browser
 npm run start
 # run and view test output 
@@ -19,102 +19,174 @@ npm run test
 ##### Syntax
 
 - `jest.spyOn(global, "fetch")` to mock `fetch` implementation
-- `await wait(() ={'>'} getByTestId("my-async-element"))` to wait until element is visible
+- `act()`, allows for controlled promises and gives you more precise control over when state updates happen for the React rendering lifecycle. Past syntax has used:
+  - `await wait(() ={'>'} getByTestId("my-async-element"))` to wait until element is visible
+  - `await wait()` holds until the next tick, e.g. API call or `setTimeout`
 - `global.fetch.mockClear` to clear mock after test
 - `global.fetch.mock.calls` returns an array of function invocations, which in turn returns an array with the `args` used in each invocation
 - `describe` to group API tests and clear mock after each
 - `mockImplementationOnce` to have more control over multiple API requests
-- `await wait()` holds until the next tick, e.g. API call or `setTimeout`
 - Before setting up your test suites, you should use `afterEach(cleanup)` (after imports) in order to unmount any React trees that were mounted with render
 
-### Testing MultipleFetches
+### Create a minimum of 2 of 5 Tests for MultipleFetches
 
-Create five tests for the Counter component.
+1️⃣ [Initial State Test] The first test should verify that component starts without any post.
 
-- The first test should verify that component starts without any post.
+- Render the component
+- Assert that the post element doesn't exist
 
-  - Set a rendered `MultipleFetches` to a deconstructed `queryByTestId`.
-  - Verify that the queried element id "fetch-post" does not have content and returns null.
-- The second test should handle a button click that displays a loading message.
+2️⃣ [Loading State Test] The second test should handle a button click that displays a loading message.
 
-  - Set a rendered `MultipleFetches` to a deconstructed `queryByTestId` and `getByText`.
-  - Simulate a click event on the button with text "Fetch post and comments".
-  - Verify that the node with id "fetch-loading-post" has content text of "Loading post...".
-- The third test should group all API tests together and clear each mock after each test.
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Assert that loading message is displayed
 
-  - Mock fetching an API implementation.
-  - Mock single fetch call to have more control over multiple API requests.
-  - If call is successful return and object with a key of title and a value of text "How to Become a Bad Developer".
-  - Mock a second fetch call to have more control over multiple API requests.
-  - If call is successful return an array of objects containing two key-value pairs; the first key an incremented id on each object, and a second key of name with the first object value being "Rafael" and the second value being "Andressa".
-  - Set a rendered `MultipleFetches` to a deconstructed `getByTestId`, `getByText`, and `getAllByTestId`.
-  - Simulate a click event on the button with text "Fetch post and comments".
-  - Wait for the next API call.
-  - Verify that the fetch call has been called twice.
-  - Verify the first fetch API call url is "https://jsonplaceholder.typicode.com/posts/1".
-  - Verify the second fetch API call url is "https://jsonplaceholder.typicode.com/posts/1/comments".
-  - Verify that the node with id "fetch-post" has content text of "How to Become a Bad Developer".
-  - Verify that there is a node present with text "All fetched!".
-  - Set the component id "comment-author" to an authors variable.
-  - Verify that the first author's name is "Rafael".
-  - Verify that the first author's name is "Andressa".
-- The fourth test should handle displaying comment if API fails.
+3️⃣ [Success State Test] The third test should group all API tests together and clear each mock after each test.
 
-  - Mock fetching an API implementation.
-  - If call is successful return and object with a key of title and a value of text "How to Become a Bad Developer"
-  - If call is unsuccessful return a 500 status.
-  - Set a rendered `MultipleFetches` to a deconstructed `getByTestId`, `getByText`, and `queryByText`.
-  - Simulate a click event on the button with text "Fetch post and comments".
-  - Wait for the next API call.
-  - Verify that the fetch call has been called twice.
-  - Verify the first fetch API call url is "https://jsonplaceholder.typicode.com/posts/1".
-  - Verify the second fetch API call url is "https://jsonplaceholder.typicode.com/posts/1/comments".
-  - Verify that the node with id "fetch-post" has content text of "How to Become a Bad Developer".
-  - Verify that the node with id "fetch-error-comments" has content text of "Failed to fetch".
-  - Verify that there is no present node with text "All fetched!".
-- The fifth test should handle displaying post error if API fails.
+- Create controlled Promises for both fetches
+- Mock the fetch API for both calls (e.g. `jest.spyOn()`)
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Resolve the first fetch promise (post), but allow the component to process the state update
 
-  - Mock fetching an API implementation.
-  - If call is unsuccessful return a 500 status.
-  - Set a rendered `MultipleFetches` to a deconstructed `getByTestId`, `getByText`, and `queryByText`.
-  - Simulate a click event on the button with text "Fetch post and comments".
-  - Wait until the "fetch-error-post" node ID is present.
-  - Verify that the fetch call has been called once.
-  - Verify the fetch API call url is "https://jsonplaceholder.typicode.com/posts/1".
-  - Verify that the node with id "fetch-error-comments" has content text of "Failed to fetch".
-  - Verify that there is no present node with text "All fetched!".
+  ```
+  await act(async () => {
+    postPromiseResolve.resolve({
+      status: 200,
+      json: () => Promise.resolve({
+        title: "A Really Cool Title"
+      })
+    });
 
-  ### Testing Fetch
+    await new Promise(....things-here...);
+  });
+  ```
+- Resolve the second fetch promise (comments), but allow the component to process the state update
 
-  Create four tests for the Counter component.
-- The first test should verify that the component starts without any joke.
+  ```
+  await act(async () => {
+    commentsPromiseResolve.resolve({
+      status: 200,
+      json: () => Promise.resolve([
+        { id: #, name: "Daaimah" },
+        ....possibly-more-things...
+      ])
+    });
 
-  - Set a rendered `Fetch` to a deconstructed `queryByTextId`.
-  - Verify that the queried element id "fetch-joke" does not have content and returns null.
-- The second test should handle a button click that displays a loading message.
+    await new Promise(....things-here...);
+  });
+  ```
+- Assert that post and comments are displayed (you may need to do some console printing here to test what kind of data you are getting back)
+- Check comment authors
 
-  - Set a rendered `Fetch` to a deconstructed `queryByTestId` and `getByText`.
-  - Simulate a click event on the button with text "Get a Chuck Norris joke".
-  - Verify that the node with id "fetch-loading" has content text of "Loading...".
-- The third test should handle displaying a joke if API succeeds, upon button click.
+4️⃣ [Comments Error Test] The fourth test should handle displaying comment if API fails.
+- Create controlled promises for both fetches
+- Mock the fetch API for both calls (e.g. `jest.spyOn()`)
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Resolve the first fetch promise (post) with success, but allow the component to process the state update
 
-  - Mock fetching an API implementation.
-  - If call is successful return and object with a key-value "Chuck Norris counted to infinity. Twice.".
-  - Set a rendered `Fetch` to a deconstructed `queryByTestId` and `getByText`.
-  - Simulate a click event on the button with text "Get a Chuck Norris joke".
-  - Wait until the "fetch-joke" node ID is present.
-  - Verify that the node with id "fetch-joke" has content text of "Chuck Norris counted to infinity. Twice.".
-  - Verify that the fetch call has been called once.
-  - Verify the fetch API call url is "https://api.chucknorris.io/jokes/random".
-  - Clear mock after test.
-- The fourth test should handle displaying an error if API fails, upon button click.
+  ```
+  await act(async () => {
+    postPromiseResolve.resolve({
+      status: ###,
+      json: () => Promise.resolve({
+        title: "A Really Cool Title"
+      })
+    });
 
-  - Mock fetching an API implementation.
-  - If call is unsuccessful return a 500 status.
-  - Set a rendered `Fetch` to a deconstructed `queryByTestId` and `getByText`.
-  - Simulate a click event on the button with text "Get a Chuck Norris joke".
-  - Wait until the "fetch-error" node ID is present.
-  - Verify that the node with id "fetch-error" has content text of "Failed to fetch".
-  - Verify that the fetch call has been called once.
-  - Verify the fetch API call url is "https://api.chucknorris.io/jokes/random".
-  - Clear mock after test.
+    await new Promise(....things-here...);
+  });
+  ```
+  
+- Resolve the second fetch promise (comments) with error, but allow the component to process the state update
+
+  ```
+  await act(async () => {
+    commentsPromiseResolve.resolve({
+      status: ###
+    });
+
+    await new Promise(....things-here...);
+  });
+  ```
+- Assert that post is displayed but comments show error
+
+5️⃣ [Post Error Test] The fifth test should handle displaying post error if API fails.
+
+- Create controlled promises for both fetches
+- Mock the fetch API for both calls (e.g. `jest.spyOn()`)
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Resolve the fetch promise with error, but allow component to process the state update
+  ```
+  await act(async () => {
+    postPromiseResolve.resolve({
+      status: ###
+    });
+  
+    await new Promise(...things-here...);
+  });
+  ```
+  - Assert that error message is displayed
+
+### Create a minimum of 2 of 4 Tests for Fetch
+
+1️⃣[Initial State Test] The first test should verify that the component starts without any joke.
+- Render the component
+- Assert that the joke element doesn't exist
+
+2️⃣ [Loading State Test] The second test should handle a button click that displays a loading message.
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Assert that loading message is displayed
+
+3️⃣ [Success State Test] The third test should handle displaying a joke if API succeeds, upon button click.
+- Create controlled promises for both fetches
+- Mock the fetch API for both calls (e.g. `jest.spyOn()`)
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Resolve the fetch promise with success response, but allow component to process the state update
+  ```
+  await act(async () => {
+    fetchPromiseResolve.resolve({
+      status: ###,
+      json: () => Promise.resolve({
+        value: "Chuck Norris counted to infinity. Twice."
+      })
+    });
+    // Allow component to process the state update
+    await new Promise(...things-here...);
+  });
+  ```
+
+- Assert that joke is displayed
+- Verify fetch was called correctly (you may need to do some console printing here to test what kind of data you are getting back)
+
+4️⃣ [Error State Test] The fourth test should handle displaying an error if API fails, upon button click.
+- Create controlled promises for both fetches
+- Mock the fetch API for both calls (e.g. `jest.spyOn()`)
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Resolve the fetch promise with error response, but allow component to process the state update
+  ```
+  await act(async () => {
+    fetchPromiseResolve.resolve({
+      status: ###
+    });
+    // Allow component to process the state update
+    await new Promise(...things-here...);
+  });
+  ```
+- Assert that error message is displayed
+- Verify fetch was called correctly (you may need to do some console printing here to test what kind of data you are getting back)
+
+### Warning Suppressions are Independent
+
+Existing suppressed warnings in your `setupTests.js` file:
+
+1. Don't change any test logic or assertions
+2. Don't affect how the tests interact with your components
+3. Don't modify the mocking strategy or validation approach
+
+They simply prevent certain warnings from appearing in the console during test execution, making your test output cleaner and easier to read. This is not normal -or- best practice, but useful for the purposes of this quiz.
