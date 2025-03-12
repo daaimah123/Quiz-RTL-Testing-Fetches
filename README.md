@@ -1,6 +1,6 @@
 # RTL Testing Fetches
 
-## Add GIF of expected behavior here!!!
+![fetch rtl quiz](https://github.com/user-attachments/assets/51639834-0bae-4659-a529-291bd0189ac6)
 
 ### Helpful Tips to Get You Started
 
