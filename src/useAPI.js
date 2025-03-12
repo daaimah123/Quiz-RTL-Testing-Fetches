@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useCallback } from "react"
 
 const useAPI = (initialData = null) => {
@@ -38,4 +36,3 @@ const useAPI = (initialData = null) => {
 }
 
 export default useAPI
-
