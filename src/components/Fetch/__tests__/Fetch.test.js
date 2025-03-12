@@ -1,8 +1,8 @@
-import React from 'react';
-import Fetch from '../Fetch';
-import { render, fireEvent, cleanup} from '@testing-library/react';
+import { act } from "react"
+import Fetch from "../Fetch.js"
+import { render, fireEvent, cleanup } from "@testing-library/react"
 
-afterEach(cleanup);
+afterEach(cleanup)
 
 test('starts without any joke', () => {
 /*
