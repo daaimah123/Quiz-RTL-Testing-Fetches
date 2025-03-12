@@ -1,40 +1,76 @@
 import React from 'react';
 import Fetch from '../Fetch';
-import { render, fireEvent, cleanup, waitFor } from '@testing-library/react';
+import { render, fireEvent, cleanup} from '@testing-library/react';
 
 afterEach(cleanup);
 
 test('starts without any joke', () => {
-  // Set a rendered `Fetch` to a deconstructed `queryByTextId`.
-  // Verify that the queried element id "fetch-joke" does not have content and returns null.
+/*
+1️⃣[Initial State Test] The first test should verify that the component starts without any joke.
+- Render the component
+- Assert that the joke element doesn't exist
+*/
 });
 
 test('when clicking on button, displays loading message', () => {
-  // Set a rendered `Fetch` to a deconstructed `queryByTestId` and `getByText`.
-  // Simulate a click event on the button with text "Get a Chuck Norris joke".
-  // Verify that the node with id "fetch-loading" has content text of "Loading...".
+/*
+2️⃣ [Loading State Test] The second test should handle a button click that displays a loading message.
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Assert that loading message is displayed
+*/
 });
 
 test('when clicking on button displays joke if API succeeds', async () => {
-  // Mock fetching an API implementation.
-      // If call is successful return and object with a key-value "Chuck Norris counted to infinity. Twice.".
-  // Set a rendered `Fetch` to a deconstructed `queryByTestId` and `getByText`.
-  // Simulate a click event on the button with text "Get a Chuck Norris joke".
-  // Wait until the "fetch-joke" node ID is present.
-  // Verify that the node with id "fetch-joke" has content text of "Chuck Norris counted to infinity. Twice.".
-  // Verify that the fetch call has been called once.
-  // Verify the fetch API call url is "https://api.chucknorris.io/jokes/random".
-  // Clear mock after test.
+/*
+3️⃣ [Success State Test] The third test should handle displaying a joke if API succeeds, upon button click.
+- Create controlled promises for both fetches
+- Mock the fetch API for both calls (e.g. `jest.spyOn()`)
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Resolve the fetch promise with success response, but allow component to process the state update
+  ```
+  await act(async () => {
+    fetchPromiseResolve.resolve({
+      status: ###,
+      json: () => Promise.resolve({
+        value: "Chuck Norris counted to infinity. Twice."
+      })
+    });
+    // Allow component to process the state update
+    await new Promise(...things-here...);
+  });
+  ```
+
+- Assert that joke is displayed
+- Verify fetch was called correctly (you may need to do some console printing here to test what kind of data you are getting back)
+*/
+
+  global.fetch.mockClear();
+
 });
 
 test('when clicking on button displays error if API fails', async () => {
-  // Mock fetching an API implementation.
-    // If call is unsuccessful return a 500 status.
-  // Set a rendered `Fetch` to a deconstructed `queryByTestId` and `getByText`.
-  // Simulate a click event on the button with text "Get a Chuck Norris joke".
-  // Wait until the "fetch-error" node ID is present.
-  // Verify that the node with id "fetch-error" has content text of "Failed to fetch".
-  // Verify that the fetch call has been called once.
-  // Verify the fetch API call url is "https://api.chucknorris.io/jokes/random".
-  // Clear mock after test.
+/*
+4️⃣ [Error State Test] The fourth test should handle displaying an error if API fails, upon button click.
+- Create controlled promises for both fetches
+- Mock the fetch API for both calls (e.g. `jest.spyOn()`)
+- Render the component
+- Emmulate a button click using `fireEvent.click()`
+- Resolve the fetch promise with error response, but allow component to process the state update
+  ```
+  await act(async () => {
+    fetchPromiseResolve.resolve({
+      status: ###
+    });
+    // Allow component to process the state update
+    await new Promise(...things-here...);
+  });
+  ```
+- Assert that error message is displayed
+- Verify fetch was called correctly (you may need to do some console printing here to test what kind of data you are getting back)
+*/
+
+  global.fetch.mockClear();
+
 });
