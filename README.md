@@ -19,12 +19,13 @@ npm run test
 ##### Syntax
 
 - `jest.spyOn(global, "fetch")` to mock `fetch` implementation
-- `await wait(() ={'>'} getByTestId("my-async-element"))` to wait until element is visible
+- `act()`, allows for controlled promises and gives you more precise control over when state updates happen for the React rendering lifecycle. Past syntax has used:
+    - `await wait(() ={'>'} getByTestId("my-async-element"))` to wait until element is visible
+    - `await wait()` holds until the next tick, e.g. API call or `setTimeout`
 - `global.fetch.mockClear` to clear mock after test
 - `global.fetch.mock.calls` returns an array of function invocations, which in turn returns an array with the `args` used in each invocation
 - `describe` to group API tests and clear mock after each
 - `mockImplementationOnce` to have more control over multiple API requests
-- `await wait()` holds until the next tick, e.g. API call or `setTimeout`
 - Before setting up your test suites, you should use `afterEach(cleanup)` (after imports) in order to unmount any React trees that were mounted with render
 
 ### Testing MultipleFetches
@@ -118,3 +119,12 @@ Create five tests for the Counter component.
   - Verify that the fetch call has been called once.
   - Verify the fetch API call url is "https://api.chucknorris.io/jokes/random".
   - Clear mock after test.
+
+### Warning Suppressions are Independent
+Existing suppressed warnings in your `setupTests.js` file:
+
+1. Don't change any test logic or assertions
+2. Don't affect how the tests interact with your components
+3. Don't modify the mocking strategy or validation approach
+
+They simply prevent certain warnings from appearing in the console during test execution, making your test output cleaner and easier to read. This is not normal -or- best practice, but useful for the purposes of this quiz.
